@@ -230,7 +230,9 @@ def setup_root_ctrl_attributes():
         s_geo_shape = cmds.listRelatives(s_geo, children=True, type='shape')[0]
         cmds.addAttr(s_ctrl, longName='highlighted', attributeType='bool', defaultValue=0, keyable=True)
         # create multDL node to multiply debugHighlight and highlighted attrs
-        s_multiply_node = cmds.createNode('multDL', name=s_ctrl.replace('_ctrl','_debugHighlight_multiply'))
+        i_maya_version = int(cmds.about(version=True).split('.')[0])
+        s_multDL_version_name = 'multDL' if i_maya_version >= 2026 else 'multDoubleLinear'
+        s_multiply_node = cmds.createNode(s_multDL_version_name, name=s_ctrl.replace('_ctrl','_debugHighlight_multiply'))
         cmds.connectAttr(s_root_ctrl+'.debugHighlight', s_multiply_node+'.input1', force=True)
         cmds.connectAttr(s_ctrl+'.highlighted', s_multiply_node+'.input2', force=True)
         # create blendColor node
